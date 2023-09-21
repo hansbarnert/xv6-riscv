@@ -98,7 +98,12 @@ sys_getppid(void)
   if (parent == 0)
   {
     return -1;
-  }
+  } 
   int ppid = parent->pid;
   return ppid; 
+}
+
+sys_getancestor(void)
+{
+  return 0;
 }
