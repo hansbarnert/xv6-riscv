@@ -36,4 +36,5 @@ entry("getpid");
 entry("sbrk");
 entry("sleep");
 entry("uptime");
-entry("getppid")
+entry("getppid");
+entry("fork_priority")
