@@ -5,6 +5,7 @@
 #include "memlayout.h"
 #include "spinlock.h"
 #include "proc.h"
+#define NULL ((void *)0)
 
 uint64
 sys_exit(void)
@@ -12,7 +13,7 @@ sys_exit(void)
   int n;
   argint(0, &n);
   exit(n);
-  return 0;  // not reached
+  return 0; // not reached
 }
 
 uint64
@@ -43,7 +44,7 @@ sys_sbrk(void)
 
   argint(0, &n);
   addr = myproc()->sz;
-  if(growproc(n) < 0)
+  if (growproc(n) < 0)
     return -1;
   return addr;
 }
@@ -57,8 +58,10 @@ sys_sleep(void)
   argint(0, &n);
   acquire(&tickslock);
   ticks0 = ticks;
-  while(ticks - ticks0 < n){
-    if(killed(myproc())){
+  while (ticks - ticks0 < n)
+  {
+    if (killed(myproc()))
+    {
       release(&tickslock);
       return -1;
     }
@@ -98,12 +101,30 @@ sys_getppid(void)
   if (parent == 0)
   {
     return -1;
-  } 
+  }
   int ppid = parent->pid;
-  return ppid; 
+  return ppid;
 }
 
+uint64
 sys_getancestor(void)
 {
-  return 0;
+  int n;
+  argint(0, &n);
+  struct proc *p = myproc();
+  if (n == 0)
+  {
+    return p->pid;
+  }
+  for (int i = 0; i < n; i++)
+  {
+    if (p->parent != NULL)
+    {
+      p = p->parent;
+    }
+    else
+      return -1;
+  }
+  int ancestor_pid = p->pid;
+  return ancestor_pid;
 }
