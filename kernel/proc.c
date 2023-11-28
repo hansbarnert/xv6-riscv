@@ -498,22 +498,35 @@ wait(uint64 addr)
 void
 scheduler(void)
 {
-  struct proc *p;
+  struct proc *p, *p1;
   struct cpu *c = mycpu();
-  
   c->proc = 0;
   for(;;){
     // Avoid deadlock by ensuring that devices can interrupt.
-    intr_on();
+  
+    intr_on();  
+    struct proc *highP;
 
     for(p = proc; p < &proc[NPROC]; p++) {
+      highP = p;
       acquire(&p->lock);
       if(p->state == RUNNABLE) {
         // Switch to chosen process.  It is the process's job
         // to release its lock and then reacquire it
         // before jumping back to us.
-        p->state = RUNNING;
-        c->proc = p;
+        // debemos hacer el context swtich si y solo si el nuevo proceso 
+        // tiene mas prioridad que el alctua
+
+        for(p1 = proc; p1 < &proc[NPROC]; p1++){
+	        if(p1->state != RUNNABLE)
+	          continue;
+	        if(highP->priority < p1->priority)   
+	          highP = p1;
+        }
+      p = highP;
+      p->state = RUNNING;
+      c->proc = p;
+
         swtch(&c->context, &p->context);
 
         // Process is done running for now.
