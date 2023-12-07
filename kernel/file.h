@@ -1,3 +1,8 @@
+#define ANY 0
+#define READ 1
+#define WRITE 2
+#define RW 3
+
 struct file {
   enum { FD_NONE, FD_PIPE, FD_INODE, FD_DEVICE } type;
   int ref; // reference count
@@ -27,6 +32,7 @@ struct inode {
   short nlink;
   uint size;
   uint addrs[NDIRECT+1];
+  int perm;           // 0,1,2 or 3 for -,r,w,rw
 };
 
 // map major device number to device functions.

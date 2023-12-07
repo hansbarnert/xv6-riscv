@@ -328,7 +328,7 @@ sys_open(void)
       return -1;
     }
     ilock(ip);
-    if(ip->type == T_DIR && omode != O_RDONLY){
+    if(ip->type == T_DIR && ((omode != O_RDONLY)||(omode != O_RDWR))){
       iunlockput(ip);
       end_op();
       return -1;
@@ -502,4 +502,12 @@ sys_pipe(void)
     return -1;
   }
   return 0;
+}
+
+uint64
+sys_chmod(struct file file, int mode){
+  // primero debemos chequear si el archivo tiene los permisos para ser modificado
+  if(sys_open()!= -1){
+    file.ip->perm == mode;
+  }
 }

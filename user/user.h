@@ -23,6 +23,7 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int getppid(void);
+int chmod(struct file file, int mode);
 
 // ulib.c
 int stat(const char*, struct stat*);
